@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import zlib
+import time
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -416,11 +417,13 @@ def fetch_sra_runinfo(file_in, file_out, ena_metadata_fields):
                 id_str = ", ".join([x + "*" for x in PREFIX_LIST])
                 logger.error(f"Please provide a valid database id starting with {id_str}!\n" f"Line: '{line.strip()}'")
                 sys.exit(1)
+            time.sleep(1)
             ids = DatabaseResolver.expand_identifier(db_id)
             if not ids:
                 logger.error(f"No matches found for database id {db_id}!\nLine: '{line.strip()}'")
                 sys.exit(1)
             for accession in ids:
+                time.sleep(1)
                 for row in ena_fetcher.open_experiment_table(accession):
                     run_accession = row["run_accession"]
                     if run_accession not in run_ids:
