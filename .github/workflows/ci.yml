@@ -54,22 +54,17 @@ jobs:
       - name: Run nf-test
         run: nf-test test tests/pipeline/ --profile "test,${{ matrix.profile }}" --tap=test.tap
 
+      - uses: pcolby/tap-summary@v1
+        with:
+          path: >-
+            test.tap
+
       # If the test fails, output the software_versions.yml using the 'batcat' utility
       - name: Output log on failure
         if: failure()
         run: |
           sudo apt install bat > /dev/null
           batcat --decorations=always --color=always /home/runner/work/fetchngs/fetchngs/.nf-test/tests/*/output/pipeline_info/software_versions.yml
-
-      # Comment on the PR with the test results
-      - name: Comment PR with execution number
-        if: github.event_name == 'pull_request' && github.ref != 'refs/heads/dev'
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            _(execution **${{ github.run_id }}** / attempt **${{ github.run_attempt }}**)_
-          comment_tag: execution
-          reactions: eyes
 
   test-master:
     # Only run on master branch or when a PR is opened against master
@@ -104,19 +99,14 @@ jobs:
       - name: Run nf-test
         run: nf-test test tests/pipeline/ --profile "test,${{ matrix.profile }}" --tap=test.tap
 
+      - uses: pcolby/tap-summary@v1
+        with:
+          path: >-
+            test.tap
+
       # If the test fails, output the software_versions.yml using the 'batcat' utility
       - name: Output log on failure
         if: failure()
         run: |
           sudo apt install bat > /dev/null
           batcat --decorations=always --color=always /home/runner/work/fetchngs/fetchngs/.nf-test/tests/*/output/pipeline_info/software_versions.yml
-
-      # Comment on the PR with the test results
-      - name: Comment PR with execution number
-        if: github.event_name == 'pull_request' && github.ref != 'refs/heads/dev'
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            _(execution **${{ github.run_id }}** / attempt **${{ github.run_attempt }}**)_
-          comment_tag: execution
-          reactions: eyes
